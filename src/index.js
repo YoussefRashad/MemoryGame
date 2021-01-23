@@ -6,9 +6,6 @@ import * as serviceWorker from './serviceWorker';
 
 /* Bootstrap 4 */
 import "bootstrap/dist/css/bootstrap.min.css";
-import 'jquery'
-import 'popper.js'
-import "bootstrap/dist/js/bootstrap.bundle.min";
 /* End Bootstrap 4 */
 
 
