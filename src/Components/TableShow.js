@@ -117,7 +117,7 @@ const TableShow = () => {
                 <table className="table table-striped table-bordered border-primary">
                     <tbody>
                         <tr>
-                            {
+                            {/* {
                                 [...new Array(4)].map((item, index)=>{
                                     return (
                                         <TableItem 
@@ -128,11 +128,15 @@ const TableShow = () => {
                                         />
                                     )
                                 })
-                            }
+                            } */}
+                            <TableItem index="0" {...dataImages[0]} handleClick={handleClick} />
+                            <TableItem index="1" {...dataImages[1]} handleClick={handleClick} />
+                            <TableItem index="2" {...dataImages[2]} handleClick={handleClick} />
+                            <TableItem index="3" {...dataImages[3]} handleClick={handleClick} />
                         </tr>
 
                         <tr>
-                            {
+                            {/* {
                                 [...new Array(4)].map((item, index) => {
                                     return (
                                         <TableItem 
@@ -143,11 +147,15 @@ const TableShow = () => {
                                         />
                                     )
                                 })
-                            }
+                            } */}
+                            <TableItem index="4" {...dataImages[4]} handleClick={handleClick} />
+                            <TableItem index="5" {...dataImages[5]} handleClick={handleClick} />
+                            <TableItem index="6" {...dataImages[6]} handleClick={handleClick} />
+                            <TableItem index="7" {...dataImages[7]} handleClick={handleClick} />
                         </tr>
 
                         <tr>
-                            {
+                            {/* {
                                 [...new Array(4)].map((item, index) => {
                                     return (
                                         <TableItem
@@ -158,11 +166,15 @@ const TableShow = () => {
                                         />
                                     )
                                 })
-                            }
+                            } */}
+                            <TableItem index="8" {...dataImages[8]} handleClick={handleClick} />
+                            <TableItem index="9" {...dataImages[9]} handleClick={handleClick} />
+                            <TableItem index="10" {...dataImages[10]} handleClick={handleClick} />
+                            <TableItem index="11" {...dataImages[11]} handleClick={handleClick} />
                         </tr>
 
                         <tr>
-                            {
+                            {/* {
                                 [...new Array(4)].map((item, index) => {
                                     return (
                                         <TableItem
@@ -173,7 +185,11 @@ const TableShow = () => {
                                         />
                                     )
                                 })
-                            }
+                            } */}
+                            <TableItem index="12" {...dataImages[12]} handleClick={handleClick} />
+                            <TableItem index="13" {...dataImages[13]} handleClick={handleClick} />
+                            <TableItem index="14" {...dataImages[14]} handleClick={handleClick} />
+                            <TableItem index="15" {...dataImages[15]} handleClick={handleClick} />
                         </tr>
                     </tbody>
                 </table>
