@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Repeat } from '@material-ui/icons'
 import TableItem from './tableItem'
 import data from './images'
@@ -7,22 +7,53 @@ import Alert from './Alert'
 const TableShow = () => {
 
     const [dataImages, setDataImages] = useState(data)
-    const [noOfSelected, setNoOfSelected] = useState(0)
     const [noOfMatched, setNoOfMatched] = useState(0)
     const [noOfFail, setNoOfFail] = useState(0)
     const [alert, setAlert] = useState({ show: false })
-    const hideAlert = () =>{
-        setAlert({ show: false })
-        handleReset()
-    }
+    const [showManipluate, setShowManipluate] = useState({firstItem: null, secondItem: null})
 
     // initial shuffle
-    React.useEffect(()=>{
+    React.useEffect(() => {
         setDataImages(dataImages.map(a => ({ sort: Math.random(), value: a }))
             .sort((a, b) => a.sort - b.sort)
             .map(a => a.value))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+        if(showManipluate.firstItem && showManipluate.secondItem){
+            if (showManipluate.firstItem.id === showManipluate.secondItem.id){
+                const data = dataImages.map(item =>{
+                    if (item.id === showManipluate.firstItem.id || item.id === showManipluate.secondItem.id ){
+                        return { ...item, matched: true }
+                    }
+                    return item
+                })
+                setDataImages(data)
+                setNoOfMatched(noOfMatched + 1);
+                setShowManipluate({
+                    firstItem: null,
+                    secondItem: null
+                })
+            } else {
+                setTimeout(() => {
+                    const data = dataImages.map(item => {
+                        if (item.id === showManipluate.firstItem.id || item.id === showManipluate.secondItem.id) {
+                            return { ...item, selected: false }
+                        }
+                        return item
+                    })
+                    setDataImages(data)
+                    setNoOfFail(noOfFail + 1);
+                    setShowManipluate({
+                        firstItem: null,
+                        secondItem: null
+                    })
+                }, 800);
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showManipluate]);
 
     // Show Alert When User Win
     React.useEffect(() => {
@@ -31,59 +62,38 @@ const TableShow = () => {
         }
     }, [noOfMatched])
 
-    const handleClick = (ID) => {
-      if (!dataImages[ID].matched) {
-        setNoOfSelected(noOfSelected + 1);
-
-        if (noOfSelected < 2) {
-          // if matched 2
-          if (noOfSelected === 1) {
-            dataImages[ID].selected = true;
-            let isfail = true;
-            let fromCondition = false;
-
-            for (let index = 0; index < dataImages.length; index++) {
-              if (index === ID) continue;
-              else if (
-                dataImages[index].selected &&
-                dataImages[index].id === dataImages[ID].id
-              ) {
-                dataImages[index].matched = true;
-                dataImages[ID].matched = true;
-                setNoOfMatched(noOfMatched + 1);
-                fromCondition = true;
-                break;
-              } else {
-                isfail = true;
-              }
-            }
-
-            if (isfail && !fromCondition) {
-              setNoOfFail(noOfFail + 1);
-            }
-
-            setTimeout(() => {
-              // to set all selected items by false to hide it
-              for (let index = 0; index < dataImages.length; index++) {
-                if (dataImages[index].selected) {
-                  if (!dataImages[index].matched) {
-                    dataImages[index].selected = false;
-                    if (!dataImages[ID].matched) {
-                      dataImages[ID].selected = false;
+    const handleClicked = (index)=>{
+        // to prevent the player to select many items when the timer is working
+        if(!showManipluate.secondItem){ 
+            if (!dataImages[index].matched) {
+                if (!showManipluate.firstItem) { // it is empty
+                    // select one item only
+                    setShowManipluate({
+                        ...showManipluate,
+                        firstItem: { ...dataImages[index], index }
+                    })
+                    dataImages[index].selected = true;
+                    setTimeout(() => {
+                        console.log(dataImages)
+                    }, 800);
+                } else { // select second one also
+                    // to determine it's index not selected before
+                    if (showManipluate.firstItem['index'] !== index) {
+                        dataImages[index].selected = true;
+                        setShowManipluate({
+                            ...showManipluate,
+                            secondItem: { ...dataImages[index], index }
+                        })
                     }
-                  }
                 }
-              }
-
-              setNoOfSelected(0);
-            }, 500);
-          } else {
-            // 1
-            dataImages[ID].selected = true;
-          }
+            }
         }
-      }
-    };
+    }
+
+    const hideAlert = () => {
+        setAlert({ show: false })
+        handleReset()
+    }
 
     const handleReset = ()=>{
         let data = dataImages.map(item =>{
@@ -95,7 +105,9 @@ const TableShow = () => {
             .map(a => a.value)
         setDataImages(data)
         // reset all state
-        setNoOfFail(0); setNoOfMatched(0); setNoOfSelected(0);
+        setNoOfFail(0); setNoOfMatched(0);
+        setAlert({ show: false })
+        setShowManipluate({ firstItem: null, secondItem: null })
     }
 
     return (
@@ -117,79 +129,79 @@ const TableShow = () => {
                 <table className="table table-striped table-bordered border-primary">
                     <tbody>
                         <tr>
-                            {/* {
+                            {
                                 [...new Array(4)].map((item, index)=>{
                                     return (
                                         <TableItem 
                                             key={index}
                                             index={index} 
                                             {...dataImages[index]} 
-                                            handleClick={handleClick} 
+                                            handleClick={handleClicked} 
                                         />
                                     )
                                 })
-                            } */}
-                            <TableItem index="0" {...dataImages[0]} handleClick={handleClick} />
-                            <TableItem index="1" {...dataImages[1]} handleClick={handleClick} />
-                            <TableItem index="2" {...dataImages[2]} handleClick={handleClick} />
-                            <TableItem index="3" {...dataImages[3]} handleClick={handleClick} />
+                            }
+                            {/* <TableItem index={0} {...dataImages[0]} handleClick={handleClicked} />
+                            <TableItem index={1} {...dataImages[1]} handleClick={handleClicked} />
+                            <TableItem index={2} {...dataImages[2]} handleClick={handleClicked} />
+                            <TableItem index={3} {...dataImages[3]} handleClick={handleClicked} /> */}
                         </tr>
 
                         <tr>
-                            {/* {
+                            {
                                 [...new Array(4)].map((item, index) => {
                                     return (
                                         <TableItem 
                                             key={index+4} 
                                             index={index+4} 
                                             {...dataImages[index+4]} 
-                                            handleClick={handleClick} 
+                                            handleClick={handleClicked} 
                                         />
                                     )
                                 })
-                            } */}
-                            <TableItem index="4" {...dataImages[4]} handleClick={handleClick} />
-                            <TableItem index="5" {...dataImages[5]} handleClick={handleClick} />
-                            <TableItem index="6" {...dataImages[6]} handleClick={handleClick} />
-                            <TableItem index="7" {...dataImages[7]} handleClick={handleClick} />
+                            }
+                            {/* <TableItem index={4} {...dataImages[4]} handleClick={handleClicked} />
+                            <TableItem index={5} {...dataImages[5]} handleClick={handleClicked} />
+                            <TableItem index={6} {...dataImages[6]} handleClick={handleClicked} />
+                            <TableItem index={7} {...dataImages[7]} handleClick={handleClicked} /> */}
                         </tr>
 
                         <tr>
-                            {/* {
+                            {
                                 [...new Array(4)].map((item, index) => {
                                     return (
                                         <TableItem
                                             key={index + 8}
                                             index={index + 8}
                                             {...dataImages[index + 8]}
-                                            handleClick={handleClick}
+                                            handleClick={handleClicked}
                                         />
                                     )
                                 })
-                            } */}
-                            <TableItem index="8" {...dataImages[8]} handleClick={handleClick} />
-                            <TableItem index="9" {...dataImages[9]} handleClick={handleClick} />
-                            <TableItem index="10" {...dataImages[10]} handleClick={handleClick} />
-                            <TableItem index="11" {...dataImages[11]} handleClick={handleClick} />
+                            }
+                            {/* <TableItem index={8} {...dataImages[8]} handleClick={handleClicked} />
+                            <TableItem index={9} {...dataImages[9]} handleClick={handleClicked} />
+                            <TableItem index={10} {...dataImages[10]} handleClick={handleClicked} />
+                            <TableItem index={11} {...dataImages[11]} handleClick={handleClicked} /> */}
                         </tr>
 
                         <tr>
-                            {/* {
+                            {
                                 [...new Array(4)].map((item, index) => {
                                     return (
                                         <TableItem
                                             key={index + 12}
                                             index={index + 12}
                                             {...dataImages[index + 12]}
-                                            handleClick={handleClick}
+                                            handleClick={handleClicked}
                                         />
                                     )
                                 })
-                            } */}
-                            <TableItem index="12" {...dataImages[12]} handleClick={handleClick} />
-                            <TableItem index="13" {...dataImages[13]} handleClick={handleClick} />
-                            <TableItem index="14" {...dataImages[14]} handleClick={handleClick} />
-                            <TableItem index="15" {...dataImages[15]} handleClick={handleClick} />
+                            }
+                            {/* <TableItem index={12} {...dataImages[12]} handleClick={handleClicked} />
+                            <TableItem index={13} {...dataImages[13]} handleClick={handleClicked} />
+                            <TableItem index={14} {...dataImages[14]} handleClick={handleClicked} />
+                            <TableItem index={15} {...dataImages[15]} handleClick={handleClicked} /> */}
                         </tr>
                     </tbody>
                 </table>

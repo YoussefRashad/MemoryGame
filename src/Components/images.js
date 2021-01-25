@@ -22,7 +22,7 @@ let dataImages = [
         matched: false
     },
     {
-        id: 2,
+        id: 2, // 2
         path: banana1,
         initialState: InitialImage,
         selected: false,
