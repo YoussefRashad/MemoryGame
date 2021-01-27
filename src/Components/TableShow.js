@@ -83,7 +83,7 @@ const TableShow = () => {
                         if (showManipluate.firstItem['index'] !== index) {
                             setLoading(true)
                             dataImages[index].selected = true;
-                            setTimeOut(()=>{
+                            setTimeout(()=>{
 setShowManipluate({
                                 ...showManipluate,
                                 secondItem: { ...dataImages[index], index }
