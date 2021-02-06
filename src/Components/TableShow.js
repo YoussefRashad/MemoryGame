@@ -64,7 +64,7 @@ const TableShow = () => {
             }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [showManipluate]);
+    }, [showManipluate, setShowManipluate]);
 
     const handleClicked = (index)=>{
         if(!loading){
