@@ -29,7 +29,7 @@ const TableShow = () => {
     }, [noOfMatched])
 
 
-    useEffect(() => {
+    React.useLayoutEffect(() => {
         if(showManipluate.firstItem && showManipluate.secondItem){
             if (showManipluate.firstItem.id === showManipluate.secondItem.id){
                 const data = dataImages.map(item =>{
@@ -83,12 +83,12 @@ const TableShow = () => {
                         if (showManipluate.firstItem['index'] !== index) {
                             setLoading(true)
                             dataImages[index].selected = true;
-                            setTimeout(()=>{
+                            //setTimeout(()=>{
 setShowManipluate({
                                 ...showManipluate,
                                 secondItem: { ...dataImages[index], index }
                             })
-},2000);
+//},2000);
                         }
                     }
                 }
